@@ -7,7 +7,11 @@ Log meals, recipes, costs and nutrients on your own or with roommates, and split
 - **Recipes**: servings, total cost, per-serving calories, protein, carbs, fat and fiber; private or shared with a household.
 - **Meals**: log personally or for a household, optionally from a recipe (cost and nutrition fill in and scale with servings).
 - **Cost splitting**: a shared meal is split evenly between whoever ate; running balances and "settle up" payments per household.
+- **Nutrition lookup**: search USDA FoodData Central, add ingredients by weight, and fill a recipe's per-serving
+  nutrition (or a meal's totals) automatically.
 - **Dashboard**: your share of spending, calories and protein over 7 and 30 days.
+- **Insights**: charts of spending and calories per day, where calories come from, best-value meals, and for a
+  household each person's share, what they paid and what they ate, over 7, 30 or 90 days.
 
 Stack: Next.js 16 (App Router, server actions), Tailwind CSS 4, Supabase (Postgres with row level security, Auth).
 
@@ -19,13 +23,17 @@ Stack: Next.js 16 (App Router, server actions), Tailwind CSS 4, Supabase (Postgr
 3. In Supabase, under Authentication > URL Configuration, set the Site URL to your site and add
    `http://localhost:3000/**` and your production URL `/**` to the redirect URLs.
 4. Copy `.env.example` to `.env.local` and fill in the project URL and publishable (anon) key from
-   Project Settings > API.
+   Project Settings > API. Optionally add a free `USDA_API_KEY` from
+   [fdc.nal.usda.gov/api-key-signup](https://fdc.nal.usda.gov/api-key-signup); without one the shared `DEMO_KEY`
+   is used, which only allows a few dozen food searches per hour.
 5. Run it:
 
    ```bash
    npm install
    npm run dev
    ```
+
+Run the unit tests with `npm test`.
 
 ## Data model
 
