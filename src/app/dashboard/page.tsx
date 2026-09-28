@@ -62,6 +62,9 @@ export default async function DashboardPage() {
           <Stat label="Protein" value={`${formatNumber(month.protein)} g`} />
         </Card>
       </div>
+      <p className="-mt-2 text-sm">
+        <Link href="/insights" className="text-accent hover:underline">See charts and household totals</Link>
+      </p>
 
       <Card>
         <h2 className="mb-3 font-semibold">Households</h2>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useMemo, useState } from "react";
+import { FoodLookup } from "@/components/food-lookup";
 import { Button, ErrorNote, Field, Input, Select, Textarea } from "@/components/ui";
 import type { HouseholdWithMembers } from "@/lib/data";
 import { formatMoney, splitEvenly } from "@/lib/format";
@@ -151,7 +152,7 @@ export function MealForm({ userId, households, recipes, initialRecipeId, initial
         </div>
       )}
 
-      <fieldset>
+      <fieldset className="space-y-3">
         <legend className="mb-2 text-sm font-medium">Nutrition for the whole meal</legend>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
           {NUTRIENT_FIELDS.map((f) => (
@@ -168,6 +169,20 @@ export function MealForm({ userId, households, recipes, initialRecipeId, initial
             </Field>
           ))}
         </div>
+        {!recipeId && (
+          <FoodLookup
+            onApply={(totals) =>
+              setNutrients(
+                Object.fromEntries(NUTRIENT_FIELDS.map((f) => [f.key, String(round1(totals[f.key]))])) as Record<
+                  keyof Nutrients,
+                  string
+                >,
+              )
+            }
+            applyLabel="Use these totals"
+            intro="Add everything that went into this meal, for everyone eating it."
+          />
+        )}
       </fieldset>
 
       <Field label="Notes">

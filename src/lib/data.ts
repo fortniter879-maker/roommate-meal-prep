@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Household, Meal, Profile } from "./types";
+import type { Household, Profile } from "./types";
 
 export type HouseholdWithMembers = Household & { members: Profile[] };
 
@@ -33,20 +33,4 @@ export async function getProfilesById(supabase: SupabaseClient, ids: string[]) {
   return new Map((data ?? []).map((p) => [p.id, p as Profile]));
 }
 
-export type MealWithShares = Meal & { meal_shares: { user_id: string; share_cents: number }[] };
-
-/** What one person spent and ate from a meal: their cost share and an even slice of the nutrients. */
-export function myPortion(meal: MealWithShares, userId: string) {
-  const mine = meal.meal_shares.find((s) => s.user_id === userId);
-  const empty = { cost_cents: 0, calories: 0, protein_g: 0, carbs_g: 0, fat_g: 0, fiber_g: 0 };
-  if (!mine) return empty;
-  const fraction = 1 / meal.meal_shares.length;
-  return {
-    cost_cents: mine.share_cents,
-    calories: Number(meal.calories) * fraction,
-    protein_g: Number(meal.protein_g) * fraction,
-    carbs_g: Number(meal.carbs_g) * fraction,
-    fat_g: Number(meal.fat_g) * fraction,
-    fiber_g: Number(meal.fiber_g) * fraction,
-  };
-}
+export { myPortion, type MealWithShares } from "./insights";
