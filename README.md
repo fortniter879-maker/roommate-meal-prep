@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Meal Prep Ledger
 
-## Getting Started
+Log meals, recipes, costs and nutrients on your own or with roommates, and split shared costs.
 
-First, run the development server:
+- **Accounts**: email and password sign-up (Supabase Auth).
+- **Households**: create one, share its invite code, roommates join with the code.
+- **Recipes**: servings, total cost, per-serving calories, protein, carbs, fat and fiber; private or shared with a household.
+- **Meals**: log personally or for a household, optionally from a recipe (cost and nutrition fill in and scale with servings).
+- **Cost splitting**: a shared meal is split evenly between whoever ate; running balances and "settle up" payments per household.
+- **Dashboard**: your share of spending, calories and protein over 7 and 30 days.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Stack: Next.js 16 (App Router, server actions), Tailwind CSS 4, Supabase (Postgres with row level security, Auth).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Create a project at [supabase.com](https://supabase.com).
+2. In the Supabase SQL editor, run `supabase/migrations/20260928000000_init.sql`
+   (or `npx supabase link` then `npx supabase db push`).
+3. In Supabase, under Authentication > URL Configuration, set the Site URL to your site and add
+   `http://localhost:3000/**` and your production URL `/**` to the redirect URLs.
+4. Copy `.env.example` to `.env.local` and fill in the project URL and publishable (anon) key from
+   Project Settings > API.
+5. Run it:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```bash
+   npm install
+   npm run dev
+   ```
 
-## Learn More
+## Data model
 
-To learn more about Next.js, take a look at the following resources:
+| Table | Purpose |
+| --- | --- |
+| `profiles` | Display name per user, created automatically on sign-up |
+| `households`, `household_members` | Shared groups; the creator becomes owner, others join via `join_household(code)` |
+| `recipes` | Per-serving nutrition and total cost; `household_id` null means private |
+| `meals` | Totals for one meal; `household_id` null means personal |
+| `meal_shares` | Each eater's share of a meal's cost (personal meals have one share) |
+| `settlements` | Payments between roommates |
+| `household_balances` (view) | Paid minus owed, adjusted for settlements; positive means the member is owed |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Money is stored in integer cents. All access is enforced with row level security: you can see your own data
+plus anything in households you belong to.
