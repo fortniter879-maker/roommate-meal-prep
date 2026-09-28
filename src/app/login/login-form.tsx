@@ -33,6 +33,12 @@ export function LoginForm({ mode, next }: { mode: "signin" | "signup"; next?: st
       <Button className="w-full" disabled={pending}>
         {pending ? "Working…" : mode === "signup" ? "Create account" : "Sign in"}
       </Button>
+      {mode === "signup" && (
+        <p className="text-center text-xs text-muted">
+          By creating an account you agree to the <Link className="text-accent" href="/terms">terms</Link> and{" "}
+          <Link className="text-accent" href="/privacy">privacy policy</Link>.
+        </p>
+      )}
       <p className="text-center text-sm text-muted">
         {mode === "signup" ? (
           <>Already have an account? <Link className="text-accent" href="/login">Sign in</Link></>

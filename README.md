@@ -18,7 +18,7 @@ Stack: Next.js 16 (App Router, server actions), Tailwind CSS 4, Supabase (Postgr
 ## Setup
 
 1. Create a project at [supabase.com](https://supabase.com).
-2. In the Supabase SQL editor, run `supabase/migrations/20260928000000_init.sql`
+2. In the Supabase SQL editor, run each file in `supabase/migrations/` in order
    (or `npx supabase link` then `npx supabase db push`).
 3. In Supabase, under Authentication > URL Configuration, set the Site URL to your site and add
    `http://localhost:3000/**` and your production URL `/**` to the redirect URLs.
@@ -34,6 +34,19 @@ Stack: Next.js 16 (App Router, server actions), Tailwind CSS 4, Supabase (Postgr
    ```
 
 Run the unit tests with `npm test`.
+
+## Deploying
+
+1. Import the repository into [Vercel](https://vercel.com/new); it detects Next.js automatically.
+2. Add the environment variables from `.env.example`, with `NEXT_PUBLIC_SITE_URL` set to the production URL
+   (for example `https://your-app.vercel.app`, or your custom domain).
+3. In Supabase, set Authentication > URL Configuration > Site URL to the production URL and add
+   `<production URL>/**` to the redirect URLs.
+4. For a custom domain, add it under the Vercel project's Settings > Domains, then update
+   `NEXT_PUBLIC_SITE_URL` and the Supabase URLs to match and redeploy.
+
+Users can read the privacy policy at `/privacy` and the terms at `/terms`, and delete their account and data
+from `/account`.
 
 ## Data model
 

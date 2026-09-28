@@ -3,10 +3,16 @@ import Link from "next/link";
 import "./globals.css";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/login/actions";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
+
+const DESCRIPTION =
+  "Log meals, recipes, costs and nutrients on your own or with roommates, and split costs fairly. Free.";
 
 export const metadata: Metadata = {
-  title: "Meal Prep Ledger",
-  description: "Log meals, recipes, costs and nutrients on your own or with roommates, and split costs fairly.",
+  metadataBase: new URL(SITE_URL),
+  title: { default: SITE_NAME, template: `%s · ${SITE_NAME}` },
+  description: DESCRIPTION,
+  openGraph: { siteName: SITE_NAME, title: SITE_NAME, description: DESCRIPTION, type: "website" },
 };
 
 const NAV = [
@@ -15,6 +21,7 @@ const NAV = [
   { href: "/recipes", label: "Recipes" },
   { href: "/insights", label: "Insights" },
   { href: "/households", label: "Households" },
+  { href: "/account", label: "Account" },
 ];
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
@@ -28,7 +35,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <header className="border-b border-border bg-surface">
           <nav className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-5 gap-y-2 px-4 py-3">
             <Link href={signedIn ? "/dashboard" : "/"} className="font-semibold">
-              🥗 Meal Prep Ledger
+              🥗 {SITE_NAME}
             </Link>
             {signedIn ? (
               <>
@@ -51,6 +58,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           </nav>
         </header>
         <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">{children}</main>
+        <footer className="border-t border-border">
+          <div className="mx-auto flex max-w-5xl flex-wrap gap-x-5 gap-y-2 px-4 py-6 text-sm text-muted">
+            <span>© {new Date().getFullYear()} {SITE_NAME}</span>
+            <Link href="/privacy" className="hover:text-foreground">Privacy</Link>
+            <Link href="/terms" className="hover:text-foreground">Terms</Link>
+            <span className="sm:ml-auto">Nutrition data from USDA FoodData Central</span>
+          </div>
+        </footer>
       </body>
     </html>
   );
