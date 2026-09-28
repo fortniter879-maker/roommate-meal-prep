@@ -17,14 +17,18 @@ export async function GET(request: NextRequest) {
   const branded = request.nextUrl.searchParams.get("branded") === "1";
 
   const url = new URL(USDA_SEARCH);
-  url.searchParams.set("api_key", process.env.USDA_API_KEY || "DEMO_KEY");
   url.searchParams.set("query", query);
   url.searchParams.set("pageSize", "20");
   url.searchParams.set("dataType", branded ? "Branded" : GENERIC_TYPES);
 
   try {
     // Nutrient data changes rarely, so identical searches are cached for a day.
-    const res = await fetch(url, { next: { revalidate: 86400 }, signal: AbortSignal.timeout(8000) });
+    // The key goes in a header, not the URL, so it never shows up in request logs or cache keys.
+    const res = await fetch(url, {
+      headers: { "X-Api-Key": process.env.USDA_API_KEY || "DEMO_KEY" },
+      next: { revalidate: 86400 },
+      signal: AbortSignal.timeout(8000),
+    });
     if (res.status === 429) {
       return Response.json({ error: "The food database is busy. Try again in a bit." }, { status: 503 });
     }
